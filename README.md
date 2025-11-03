@@ -65,6 +65,13 @@ Notes
 - Quandl/WIKI bundle coverage ends in 2018. Historical equities data in the standard `quandl` bundle is not available beyond 2018, so the backtest end date is capped at 2018-12-31.
 - Missing or delisted symbols: Some tickers may be absent or renamed in the bundle. Prefer liquid, long-lived symbols and verify with small test runs. The notebook uses `data.can_trade(asset)` guards, but preventing missing symbols up front reduces failures.
 
+### Benchmark and history constraints
+
+- Inside Zipline, index ETFs like SPY are not included in the legacy Quandl WIKI bundle. As a result, BRK_A (Berkshire Hathaway) is used as a proxy benchmark and for regime detection. SPY/QQQ/IEF/BRK-A are fetched via `yfinance` only for external comparison tables/plots outside Zipline.
+- Long lookback data from `yfinance` may not be reliably available for all symbols or adjusted series across 25–30 years. This limits coverage of key stress episodes (e.g., dot-com bubble ~2000–2002, Global Financial Crisis 2007–2009, 2010 flash crash) depending on the asset.
+- The free WIKI OHLCV feed on Quandl was discontinued after March 2018. Consequently, post-2018 regimes (e.g., 2020 COVID shock, 2022–2023 rate hikes/cuts cycles, and more recent policy/economic episodes) cannot be tested in this pipeline without integrating a paid data provider or an alternative bundle.
+- Extending tests beyond these constraints generally requires commercial datasets (e.g., Quandl paid feeds, Norgate, CRSP/WRDS, Polygon, Tiingo, etc.) and adapter code to feed Zipline or an alternative backtesting engine.
+
 ### Minimal universe example (3 tickers)
 
 Paste this in the notebook where `tickers` is defined to keep runs fast and memory-light:
